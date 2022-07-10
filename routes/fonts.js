@@ -1,15 +1,17 @@
 var express = require("express");
 var router = express.Router();
-const { createCSS } = require("../helpers/cssTextcreator.js");
+const { createCSSLink, createCSS } = require("../helpers/cssTextcreator.js");
+const { addFont } = require("../helpers/addFont.js");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
 /* GET users listing. */
 router.get("/", async (req, res, next) => {
 	res.send("respond with a resource1");
 });
 
-router.post("/addFont", async (req, res) => {
-	console.log(req.body);
-
+router.post("/addFont", upload.single("font"), async (req, res) => {
+	await addFont(req.body.fontName, req.file);
 	res.send("AOK");
 });
 
@@ -17,7 +19,7 @@ router.post("/addFont", async (req, res) => {
 // <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro&family=Literata">
 router.get("/getFontCSS", async (req, res) => {
 	console.log(req.body);
-	const cssText = await createCSS(req.body.fontName);
+	const cssText = await createCSSLink(req.body.fontName);
 	console.log("CSS Text within the API call = ", cssText);
 	res.send(cssText);
 });
@@ -31,8 +33,14 @@ router.get("/getFontCSS", async (req, res) => {
 // 	unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
 //   }
 router.get("/css2", async (req, res) => {
-	console.log(req.query.family);
-	res.send("AOK");
+	const fontFamily = req.query.family;
+	let cssInfo = {
+		fontFamily: fontFamily,
+	};
+	const cssText = await createCSS(cssInfo);
+	console.log("In the API", cssText);
+
+	res.send(cssText);
 });
 
 module.exports = router;
