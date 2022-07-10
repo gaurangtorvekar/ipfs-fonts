@@ -6,6 +6,7 @@ const fs = fsp.promises;
 const axios = require("axios");
 var FormData = require("form-data");
 const { getFilesFromPath, Web3Storage } = require("web3.storage");
+const path = require("path");
 
 // 1. Check the JSON in the project folder to see if this font already fs.exist
 // 2. If it doesn't exist, then upload to IPFS through web3.storage
@@ -27,9 +28,11 @@ const addFont = async (fontNameArg, fileObj) => {
 		console.log(rootCid);
 		const dbwebLink = `https://${rootCid}.ipfs.dweb.link/${fileObj.originalname}`;
 		console.log(dbwebLink);
+		const fileExtension = await path.extname(fileObj.originalname);
 		const fontJSON = {
 			"fontName": fontNameArg,
 			"fontDwebLink": dbwebLink,
+			"fileFormat": fileExtension.split(".")[1],
 		};
 		JSONData.push(fontJSON);
 		console.log("New JSON data = ", JSONData);

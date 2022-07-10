@@ -1,6 +1,8 @@
 require("dotenv").config({
 	path: "./.env",
 });
+const fs = require("fs").promises;
+const lodash = require("lodash");
 
 const formatFontName = async (fontName) => {
 	const fontNameFormatted = fontName.replace(/ /g, "+");
@@ -9,7 +11,29 @@ const formatFontName = async (fontName) => {
 };
 
 const getFontFile = async (fontName) => {
-	return "https://fonts.gstatic.com/s/crimsonpro/v23/q5uUsoa5M_tv7IihmnkabC5XiXCAlXGks1WZzm1MMZs-dtC4yJtEbtM.woff2";
+	let response = await fs.readFile("sampleFonts.json");
+	JSONData = JSON.parse(response);
+	console.log("JSONData = ", JSONData);
+	var JSONObj = lodash.filter(JSONData, { "fontName": fontName });
+	console.log("Selected JSON = ", JSONObj);
+	if (JSONObj) {
+		return JSONObj[0].fontDwebLink;
+	} else {
+		return null;
+	}
+};
+
+const getFileExtension = async (fontName) => {
+	let response = await fs.readFile("sampleFonts.json");
+	JSONData = JSON.parse(response);
+	console.log("JSONData = ", JSONData);
+	var JSONObj = lodash.filter(JSONData, { "fontName": fontName });
+	console.log("Selected JSON = ", JSONObj);
+	if (JSONObj) {
+		return JSONObj[0].fileFormat;
+	} else {
+		return null;
+	}
 };
 
 // This function will return an HTML snippet like so -
@@ -22,7 +46,7 @@ const createCSSLink = async (fontName) => {
 	} else {
 		apiLink = "someProdLink";
 	}
-	const finalLink = '<link rel="stylesheet" href="https://' + apiLink + "/css2?family=" + (await formatFontName(fontName)) + '">';
+	const finalLink = `<link rel="stylesheet" href="https://${apiLink}/css2?family=${await formatFontName(fontName)}">`;
 	console.log(finalLink);
 	return finalLink;
 };
@@ -41,7 +65,7 @@ const createCSS = async (cssInfo) => {
 		font-family: ${cssInfo.fontFamily};
 		font-style: normal;
 		font-weight: 400;
-		src: url(${getFontFile(cssInfo.fontFamily)}) format('woff2');
+		src: url(${await getFontFile(cssInfo.fontFamily)}) format(${await getFileExtension(cssInfo.fontFamily)});
 		unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
 	  }`;
 	console.log(cssText);

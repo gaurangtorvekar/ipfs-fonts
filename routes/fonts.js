@@ -11,13 +11,14 @@ router.get("/", async (req, res, next) => {
 });
 
 router.post("/addFont", upload.single("font"), async (req, res) => {
+	console.log(req.file);
 	await addFont(req.body.fontName, req.file);
 	res.send("AOK");
 });
 
 // This API endpoint will return an HTML snippet like so -
 // <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro&family=Literata">
-router.get("/getFontCSS", async (req, res) => {
+router.get("/getFontLink", async (req, res) => {
 	console.log(req.body);
 	const cssText = await createCSSLink(req.body.fontName);
 	console.log("CSS Text within the API call = ", cssText);
