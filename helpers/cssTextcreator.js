@@ -46,7 +46,7 @@ const createCSSLink = async (fontName) => {
 	} else {
 		apiLink = "someProdLink";
 	}
-	const finalLink = `<link rel="stylesheet" href="https://${apiLink}/css2?family=${await formatFontName(fontName)}">`;
+	const finalLink = `<link rel="stylesheet" href="http://${apiLink}/fonts/css2?family=${await formatFontName(fontName)}">`;
 	console.log(finalLink);
 	return finalLink;
 };
@@ -54,19 +54,20 @@ const createCSSLink = async (fontName) => {
 // This function will return a CSS snippet like so -
 // @font-face {
 // 	font-family: 'Crimson Pro';
-// 	font-style: normal;
-// 	font-weight: 400;
 // 	src: url(https://fonts.gstatic.com/s/crimsonpro/v23/q5uUsoa5M_tv7IihmnkabC5XiXCAlXGks1WZzm1MMZs-dtC4yJtEbtM.woff2) format('woff2');
-// 	unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
 //   }
 const createCSS = async (cssInfo) => {
 	console.log("In the helper function = ", cssInfo);
+	// let cssText = `@font-face {
+	// 	font-family: ${cssInfo.fontFamily};
+	// 	font-style: normal;
+	// 	font-weight: 300;
+	// 	src: url(${await getFontFile(cssInfo.fontFamily)}) format(${await getFileExtension(cssInfo.fontFamily)});
+	// 	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+	//   }`;
 	let cssText = `@font-face {
 		font-family: ${cssInfo.fontFamily};
-		font-style: normal;
-		font-weight: 400;
-		src: url(${await getFontFile(cssInfo.fontFamily)}) format(${await getFileExtension(cssInfo.fontFamily)});
-		unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+		src: url(${await getFontFile(cssInfo.fontFamily)});
 	  }`;
 	console.log(cssText);
 	return cssText;
