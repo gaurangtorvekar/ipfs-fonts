@@ -11,12 +11,13 @@ const formatFontName = async (fontName) => {
 };
 
 const getFontFile = async (fontName) => {
+	// TODO - handle font names with a +
 	let response = await fs.readFile("sampleFonts.json");
 	JSONData = JSON.parse(response);
 	console.log("JSONData = ", JSONData);
 	var JSONObj = lodash.filter(JSONData, { "fontName": fontName });
 	console.log("Selected JSON = ", JSONObj);
-	if (JSONObj) {
+	if (JSONObj[0]) {
 		return JSONObj[0].fontDwebLink;
 	} else {
 		return null;
@@ -65,10 +66,16 @@ const createCSS = async (cssInfo) => {
 	// 	src: url(${await getFontFile(cssInfo.fontFamily)}) format(${await getFileExtension(cssInfo.fontFamily)});
 	// 	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 	//   }`;
-	let cssText = `@font-face {
-		font-family: ${cssInfo.fontFamily};
-		src: url(${await getFontFile(cssInfo.fontFamily)});
-	  }`;
+	const fontURL = await getFontFile(cssInfo.fontFamily);
+	if (fontURL) {
+		let cssText = `@font-face {
+			font-family: ${cssInfo.fontFamily};
+			src: url(${fontURL});
+		  }`;
+	} else {
+		return null;
+	}
+
 	console.log(cssText);
 	return cssText;
 };
