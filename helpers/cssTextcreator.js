@@ -72,12 +72,11 @@ const createCSS = async (cssInfo) => {
 			font-family: ${cssInfo.fontFamily};
 			src: url(${fontURL});
 		  }`;
+		console.log(cssText);
+		return cssText;
 	} else {
 		return null;
 	}
-
-	console.log(cssText);
-	return cssText;
 };
 
 module.exports = {
