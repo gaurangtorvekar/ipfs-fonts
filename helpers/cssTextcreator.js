@@ -43,11 +43,11 @@ const createCSSLink = async (fontName) => {
 	console.log("In createCSS = ", fontName);
 	let apiLink;
 	if (process.env.NODE_ENV === "local") {
-		apiLink = "localhost:3000";
+		apiLink = "http://localhost:3000";
 	} else {
-		apiLink = "someProdLink";
+		apiLink = "https://ipfs-fonts.herokuapp.com/";
 	}
-	const finalLink = `<link rel="stylesheet" href="http://${apiLink}/fonts/css2?family=${await formatFontName(fontName)}">`;
+	const finalLink = `<link rel="stylesheet" href="${apiLink}/fonts/css2?family=${await formatFontName(fontName)}">`;
 	console.log(finalLink);
 	return finalLink;
 };
