@@ -2,7 +2,9 @@ require("dotenv").config({
 	path: "./.env",
 });
 const fs = require("fs").promises;
+const path = require("path");
 const lodash = require("lodash");
+const { checkPayment } = require(path.resolve(__dirname, "./checkPayment.js"));
 
 const formatFontName = async (fontName) => {
 	const fontNameFormatted = fontName.replace(/ /g, "+");
@@ -52,11 +54,24 @@ const createCSSLink = async (fontName) => {
 	return finalLink;
 };
 
+const checkPaidFont = async (fontName) => {
+	var JSONObj = lodash.filter(JSON.parse(await fs.readFile("sampleFonts.json")), { "fontName": fontName });
+	console.log("Selected JSON in checkPaidFont = ", JSONObj);
+	if (JSONObj) {
+		if (JSONObj[0].paidFont) {
+			return JSONObj[0].fontDwebLink;
+		}
+	} else {
+		return false;
+	}
+};
+
 // This function will return a CSS snippet like so -
 // @font-face {
 // 	font-family: 'Crimson Pro';
 // 	src: url(https://fonts.gstatic.com/s/crimsonpro/v23/q5uUsoa5M_tv7IihmnkabC5XiXCAlXGks1WZzm1MMZs-dtC4yJtEbtM.woff2) format('woff2');
-//   }
+// }
+//TODO - For paid fonts, ask the user to include a TXN hash that proves that they have paid for the font. Enable max-TXNs that enable X times use of the font
 const createCSS = async (cssInfo) => {
 	console.log("In the helper function = ", cssInfo);
 	// let cssText = `@font-face {
@@ -67,6 +82,11 @@ const createCSS = async (cssInfo) => {
 	// 	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 	//   }`;
 	const fontURL = await getFontFile(cssInfo.fontFamily);
+	const isPaidFont = await checkPaidFont(cssInfo.fontFamily);
+	if (isPaidFont) {
+		checkPayment();
+	}
+	return "AOK";
 	if (fontURL) {
 		let cssText = `@font-face {
 			font-family: ${cssInfo.fontFamily};

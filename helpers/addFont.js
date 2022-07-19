@@ -13,7 +13,7 @@ const { unlink } = require("fs/promises");
 // 2. If it doesn't exist, then upload to IPFS through web3.storage
 // 3. Save this link in the JSON file
 // 4. Use this link to serve the font
-const addFont = async (fontNameArg, fileObj) => {
+const addFont = async (fontNameArg, paidFont, fileObj) => {
 	let response = await fs.readFile("sampleFonts.json");
 	JSONData = JSON.parse(response);
 	console.log("JSONData = ", JSONData);
@@ -30,8 +30,10 @@ const addFont = async (fontNameArg, fileObj) => {
 		const dbwebLink = `https://${rootCid}.ipfs.dweb.link/${fileObj.originalname}`;
 		console.log(dbwebLink);
 		const fileExtension = await path.extname(fileObj.originalname);
+		const paidFontVal = paidFont === "true";
 		const fontJSON = {
 			"fontName": fontNameArg,
+			"paidFont": paidFontVal,
 			"fontDwebLink": dbwebLink,
 			"fileFormat": fileExtension.split(".")[1],
 		};

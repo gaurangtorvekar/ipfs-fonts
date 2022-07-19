@@ -5,8 +5,45 @@ var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
 var fontsRouter = require("./routes/fonts");
+const swaggerJSDoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 
 var app = express();
+
+const swaggerDefinition = {
+	openapi: "3.0.0",
+	info: {
+		title: "web3 fonts",
+		version: "1.0.0",
+		description: "A decentralized font delivery network",
+		license: {
+			name: "Licensed Under MIT",
+			url: "https://spdx.org/licenses/MIT.html",
+		},
+		contact: {
+			name: "Gaurang Torvekar",
+			url: "https://www.linkedin.com/in/gaurangtorvekar/",
+		},
+	},
+	servers: [
+		{
+			url: "http://localhost:3000",
+			description: "Development server",
+		},
+		{
+			url: "https://ipfs-fonts.herokuapp.com",
+			description: "Production server",
+		},
+	],
+};
+
+const options = {
+	swaggerDefinition,
+	// Paths to files containing OpenAPI definitions
+	apis: ["./routes/*.js"],
+};
+
+const swaggerSpec = swaggerJSDoc(options);
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -16,5 +53,6 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/fonts", fontsRouter);
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 module.exports = app;
