@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 const { createCSSLink, createCSS } = require("../helpers/cssTextcreator.js");
 const { addFont } = require("../helpers/addFont.js");
+const { checkPayment } = require("../helpers/checkPayment.js");
 const multer = require("multer");
 
 /* GET home page. */
@@ -86,6 +87,13 @@ router.get("/getFontLink", async (req, res) => {
 	res.send(cssText);
 });
 
+// TODO - complete this
+router.get("/getAllFonts", async (req, res) => {
+	const cssText = await createCSSLink(req.query.fontName);
+	console.log("CSS Text within the API call = ", cssText);
+	res.send(cssText);
+});
+
 /**
  * @swagger
  * /css2:
@@ -124,13 +132,15 @@ router.get("/css2", async (req, res) => {
 	let cssInfo = {
 		fontFamily: fontFamily,
 	};
-	const cssText = await createCSS(cssInfo);
-	console.log("In the API", cssText);
-	if (cssText) {
-		res.send(cssText);
-	} else {
-		res.send("Cannot find text");
-	}
+	await checkPayment();
+	return "AOK";
+	// const cssText = await createCSS(cssInfo);
+	// console.log("In the API", cssText);
+	// if (cssText) {
+	// 	res.send(cssText);
+	// } else {
+	// 	res.send("Cannot find text");
+	// }
 });
 
 module.exports = router;
