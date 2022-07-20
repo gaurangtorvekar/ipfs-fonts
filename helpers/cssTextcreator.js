@@ -59,10 +59,23 @@ const checkPaidFont = async (fontName) => {
 	console.log("Selected JSON in checkPaidFont = ", JSONObj);
 	if (JSONObj) {
 		if (JSONObj[0].paidFont) {
-			return JSONObj[0].fontDwebLink;
+			return JSONObj[0];
 		}
 	} else {
-		return false;
+		return null;
+	}
+};
+
+const cssText = async (fontFamily, fontURL) => {
+	if (fontURL) {
+		let cssText = `@font-face {
+			font-family: ${fontFamily};
+			src: url(${fontURL});
+		  }`;
+		console.log(cssText);
+		return cssText;
+	} else {
+		return null;
 	}
 };
 
@@ -83,20 +96,18 @@ const createCSS = async (cssInfo) => {
 	//   }`;
 	const fontURL = await getFontFile(cssInfo.fontFamily);
 	const isPaidFont = await checkPaidFont(cssInfo.fontFamily);
+	let text;
 	if (isPaidFont) {
-		checkPayment();
+		const ipfsHash = await checkPayment(cssInfo.userAddress);
+		if (ipfsHash) {
+			text = await cssText(cssInfo.fontFamily, fontURL);
+			return text;
+		} else {
+			return null;
+		}
 	}
-	return "AOK";
-	if (fontURL) {
-		let cssText = `@font-face {
-			font-family: ${cssInfo.fontFamily};
-			src: url(${fontURL});
-		  }`;
-		console.log(cssText);
-		return cssText;
-	} else {
-		return null;
-	}
+	text = await cssText(fontURL);
+	return text;
 };
 
 module.exports = {

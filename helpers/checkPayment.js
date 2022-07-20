@@ -13,6 +13,7 @@ const checkPayment = async (userAddress) => {
 	const provider = new ethers.providers.InfuraProvider("maticmum", process.env.INFURA_KEY);
 	let wallet = new ethers.Wallet("0x" + process.env.PRIVATE_KEY, provider);
 	const contract = new ethers.Contract(process.env.CONTRACT, abi, wallet);
+	console.log("User address = ", userAddress);
 	const buyersArray = await contract.buyers(userAddress);
 	// const { transactionHash } = await txData.wait();
 	// console.log("TXN Hash = ", transactionHash);
@@ -21,9 +22,9 @@ const checkPayment = async (userAddress) => {
 	console.log("Timestamp = ", buyersArray.lastPurchase.toString());
 	console.log("IPFS Hash = ", buyersArray.ipfsHash.toString());
 	if (buyersArray.amountPaid) {
-		return true;
+		return buyersArray.ipfsHash.toString();
 	} else {
-		return false;
+		return null;
 	}
 };
 

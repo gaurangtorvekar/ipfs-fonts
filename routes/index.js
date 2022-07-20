@@ -128,19 +128,17 @@ router.get("/getAllFonts", async (req, res) => {
 // 	src: url(https://fonts.gstatic.com/s/crimsonpro/v23/q5uUsoa5M_tv7IihmnkabC5XiXCAlXGks1WZzm1MMZs-dtC4yJtEbtM.woff2) format('woff2');
 //   }
 router.get("/css2", async (req, res) => {
-	const fontFamily = req.query.family;
 	let cssInfo = {
-		fontFamily: fontFamily,
+		fontFamily: req.query.family,
+		userAddress: req.query.address,
 	};
-	await checkPayment();
-	return "AOK";
-	// const cssText = await createCSS(cssInfo);
-	// console.log("In the API", cssText);
-	// if (cssText) {
-	// 	res.send(cssText);
-	// } else {
-	// 	res.send("Cannot find text");
-	// }
+	const cssText = await createCSS(cssInfo);
+	console.log("In the API", cssText);
+	if (cssText) {
+		res.send(cssText);
+	} else {
+		res.send("Cannot find text");
+	}
 });
 
 module.exports = router;
