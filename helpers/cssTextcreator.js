@@ -4,6 +4,7 @@ require("dotenv").config({
 const fs = require("fs").promises;
 const path = require("path");
 const lodash = require("lodash");
+const { convertToObject } = require("typescript");
 const { checkPayment } = require(path.resolve(__dirname, "./checkPayment.js"));
 
 const formatFontName = async (fontName) => {
@@ -12,12 +13,18 @@ const formatFontName = async (fontName) => {
 	return fontNameFormatted;
 };
 
+const cleanFontName = async (fontName) => {
+	const cleanedFontName = fontName.replace("+", / /g);
+	return cleanedFontName;
+};
+
 const getFontFile = async (fontName) => {
-	// TODO - handle font names with a +
 	let response = await fs.readFile("sampleFonts.json");
 	JSONData = JSON.parse(response);
 	console.log("JSONData = ", JSONData);
-	var JSONObj = lodash.filter(JSONData, { "fontName": fontName });
+	const cleanedFontName = await cleanFontName(fontName);
+	console.log("cleanedFontName = ", cleanedFontName);
+	const JSONObj = lodash.filter(JSONData, { "fontName": cleanedFontName });
 	console.log("Selected JSON = ", JSONObj);
 	if (JSONObj[0]) {
 		return JSONObj[0].fontDwebLink;
@@ -59,7 +66,9 @@ const checkPaidFont = async (fontName) => {
 	console.log("Selected JSON in checkPaidFont = ", JSONObj);
 	if (JSONObj) {
 		if (JSONObj[0].paidFont) {
-			return JSONObj[0];
+			return true;
+		} else {
+			return null;
 		}
 	} else {
 		return null;
@@ -84,30 +93,27 @@ const cssText = async (fontFamily, fontURL) => {
 // 	font-family: 'Crimson Pro';
 // 	src: url(https://fonts.gstatic.com/s/crimsonpro/v23/q5uUsoa5M_tv7IihmnkabC5XiXCAlXGks1WZzm1MMZs-dtC4yJtEbtM.woff2) format('woff2');
 // }
-//TODO - For paid fonts, ask the user to include a TXN hash that proves that they have paid for the font. Enable max-TXNs that enable X times use of the font
 const createCSS = async (cssInfo) => {
 	console.log("In the helper function = ", cssInfo);
-	// let cssText = `@font-face {
-	// 	font-family: ${cssInfo.fontFamily};
-	// 	font-style: normal;
-	// 	font-weight: 300;
-	// 	src: url(${await getFontFile(cssInfo.fontFamily)}) format(${await getFileExtension(cssInfo.fontFamily)});
-	// 	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-	//   }`;
 	const fontURL = await getFontFile(cssInfo.fontFamily);
 	const isPaidFont = await checkPaidFont(cssInfo.fontFamily);
+	console.log("isPaidFont = ", isPaidFont);
 	let text;
 	if (isPaidFont) {
 		const ipfsHash = await checkPayment(cssInfo.userAddress);
 		if (ipfsHash) {
+			console.log("Got back IPFS Hash = ", ipfsHash);
 			text = await cssText(cssInfo.fontFamily, fontURL);
+			console.log("Got back text = ", text);
 			return text;
 		} else {
 			return null;
 		}
+	} else {
+		console.log("In the else condition, fontURL = ", fontURL);
+		text = await cssText(cssInfo.fontFamily, fontURL);
+		return text;
 	}
-	text = await cssText(fontURL);
-	return text;
 };
 
 module.exports = {
