@@ -13,7 +13,7 @@ var app = express();
 const swaggerDefinition = {
 	openapi: "3.0.0",
 	info: {
-		title: "web3 fonts",
+		title: "web3 fonts API",
 		version: "1.0.0",
 		description: "A decentralized font delivery network",
 		license: {
