@@ -21,7 +21,8 @@ const addFont = async (fontNameArg, paidFont, fileObj) => {
 	if (!JSONData.some((font) => font.fontName === fontNameArg)) {
 		console.log("Adding a new font to the JSON now...");
 		const client = new Web3Storage({ token: process.env.WEB3STORAGE_API_TOKEN });
-		const filePath = "uploads/fonts/" + fileObj.originalname;
+		let filePath = "../uploads/fonts/" + fileObj.originalname;
+		filePath = path.resolve(__dirname, filePath);
 		// const fontFile = await fs.readFile(fileObj.path);
 		await fs.writeFile(filePath, fileObj.buffer);
 		const fontFileToUpload = await getFilesFromPath(filePath);
