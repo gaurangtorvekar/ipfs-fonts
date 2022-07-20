@@ -17,8 +17,8 @@ const swaggerDefinition = {
 		version: "1.0.0",
 		description: "A decentralized font delivery network",
 		license: {
-			name: "Licensed Under MIT",
-			url: "https://spdx.org/licenses/MIT.html",
+			name: "Licensed Under GPL 3.0",
+			url: "https://www.gnu.org/licenses/gpl-3.0.txt",
 		},
 		contact: {
 			name: "Gaurang Torvekar",

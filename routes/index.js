@@ -4,6 +4,8 @@ const { createCSSLink, createCSS } = require("../helpers/cssTextcreator.js");
 const { addFont } = require("../helpers/addFont.js");
 const { checkPayment } = require("../helpers/checkPayment.js");
 const multer = require("multer");
+const fs = require("fs").promises;
+const lodash = require("lodash");
 
 /* GET home page. */
 router.get("/", async (req, res, next) => {
@@ -87,11 +89,33 @@ router.get("/getFontLink", async (req, res) => {
 	res.send(cssText);
 });
 
-// TODO - complete this
+/**
+ * @swagger
+ * /getAllFonts:
+ *   get:
+ *     summary: Get all the fonts
+ *     description: Returns all the fonts from the repo's sampleFonts.json file
+ *     responses:
+ *       200:
+ *         description: An array of all fonts
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: ["Roboto","Literata"]
+ */
 router.get("/getAllFonts", async (req, res) => {
-	const cssText = await createCSSLink(req.query.fontName);
-	console.log("CSS Text within the API call = ", cssText);
-	res.send(cssText);
+	let response = await fs.readFile("sampleFonts.json");
+	JSONData = JSON.parse(response);
+	if (JSONData) {
+		let fontNames = [];
+		await JSONData.forEach((element) => {
+			fontNames.push(element.fontName);
+		});
+		res.send(fontNames);
+	} else {
+		res.send("Couldn't find fonts");
+	}
 });
 
 /**
