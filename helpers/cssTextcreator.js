@@ -4,7 +4,6 @@ require("dotenv").config({
 const fs = require("fs").promises;
 const path = require("path");
 const lodash = require("lodash");
-const { convertToObject } = require("typescript");
 const { checkPayment } = require(path.resolve(__dirname, "./checkPayment.js"));
 
 const formatFontName = async (fontName) => {
