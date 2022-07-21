@@ -4,7 +4,6 @@ const { createCSSLink, createCSS } = require("../helpers/cssTextcreator.js");
 const { addFont } = require("../helpers/addFont.js");
 const multer = require("multer");
 const fs = require("fs").promises;
-const lodash = require("lodash");
 
 /* GET home page. */
 router.get("/", async (req, res, next) => {
