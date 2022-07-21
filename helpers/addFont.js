@@ -46,6 +46,8 @@ const addFont = async (fontNameArg, paidFont, fileObj) => {
 			console.error("there was an error:", error.message);
 		}
 		return rootCid;
+	} else {
+		return "Font already exists...";
 	}
 };
 
