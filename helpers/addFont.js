@@ -9,10 +9,6 @@ const { getFilesFromPath, Web3Storage } = require("web3.storage");
 const path = require("path");
 const { unlink } = require("fs/promises");
 
-// 1. Check the JSON in the project folder to see if this font already fs.exist
-// 2. If it doesn't exist, then upload to IPFS through web3.storage
-// 3. Save this link in the JSON file
-// 4. Use this link to serve the font
 const addFont = async (fontNameArg, paidFont, fileObj) => {
 	let response = await fs.readFile("sampleFonts.json");
 	JSONData = JSON.parse(response);
@@ -49,6 +45,7 @@ const addFont = async (fontNameArg, paidFont, fileObj) => {
 		} catch (error) {
 			console.error("there was an error:", error.message);
 		}
+		return rootCid;
 	}
 };
 

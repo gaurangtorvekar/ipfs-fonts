@@ -33,31 +33,20 @@ router.get("/", async (req, res, next) => {
  *                 format: binary
  *     responses:
  *       200:
- *         description: A list of users.
+ *         description: The root CID of the font file on IPFS.
  *         content:
- *           application/json:
+ *           text/plain:
  *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: integer
- *                         description: The user ID.
- *                         example: 0
- *                       name:
- *                         type: string
- *                         description: The user's name.
- *                         example: Leanne Graham
+ *               type: string
+ *               example: bafybeia77inkw5nfumsu3kv33s6upph7wznhzw7htnn7juuv2snr6jduua
  */
 router.post("/addFont", multer({ storage: multer.memoryStorage() }).single("font"), async (req, res) => {
-	console.log(req.file);
-
-	await addFont(req.body.fontName, req.body.paidFont, req.file);
-	res.send("AOK");
+	try {
+		const cid = await addFont(req.body.fontName, req.body.paidFont, req.file);
+		res.send(cid);
+	} catch (e) {
+		return e;
+	}
 });
 
 /**
@@ -83,10 +72,13 @@ router.post("/addFont", multer({ storage: multer.memoryStorage() }).single("font
  *               example: <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro&family=Literata">
  */
 router.get("/getFontLink", async (req, res) => {
-	console.log(req.query);
-	const cssText = await createCSSLink(req.query.fontName);
-	console.log("CSS Text within the API call = ", cssText);
-	res.send(cssText);
+	try {
+		const cssText = await createCSSLink(req.query.fontName);
+		console.log("CSS Text within the API call = ", cssText);
+		res.send(cssText);
+	} catch (e) {
+		return e;
+	}
 });
 
 /**
@@ -105,16 +97,20 @@ router.get("/getFontLink", async (req, res) => {
  *               example: ["Roboto","Literata"]
  */
 router.get("/getAllFonts", async (req, res) => {
-	let response = await fs.readFile("sampleFonts.json");
-	JSONData = JSON.parse(response);
-	if (JSONData) {
-		let fontNames = [];
-		await JSONData.forEach((element) => {
-			fontNames.push(element.fontName);
-		});
-		res.send(fontNames);
-	} else {
-		res.send("Couldn't find fonts");
+	try {
+		let response = await fs.readFile("sampleFonts.json");
+		JSONData = JSON.parse(response);
+		if (JSONData) {
+			let fontNames = [];
+			await JSONData.forEach((element) => {
+				fontNames.push(element.fontName);
+			});
+			res.send(fontNames);
+		} else {
+			res.send("Couldn't find fonts");
+		}
+	} catch (e) {
+		return e;
 	}
 });
 
@@ -152,16 +148,20 @@ router.get("/getAllFonts", async (req, res) => {
 // 	src: url(https://fonts.gstatic.com/s/crimsonpro/v23/q5uUsoa5M_tv7IihmnkabC5XiXCAlXGks1WZzm1MMZs-dtC4yJtEbtM.woff2) format('woff2');
 //   }
 router.get("/css2", async (req, res) => {
-	let cssInfo = {
-		fontFamily: req.query.family,
-		userAddress: req.query.address,
-	};
-	const cssText = await createCSS(cssInfo);
-	console.log("In the API", cssText);
-	if (cssText) {
-		res.send(cssText);
-	} else {
-		res.send("Cannot find text");
+	try {
+		let cssInfo = {
+			fontFamily: req.query.family,
+			userAddress: req.query.address,
+		};
+		const cssText = await createCSS(cssInfo);
+		console.log("In the API", cssText);
+		if (cssText) {
+			res.send(cssText);
+		} else {
+			res.send("Cannot find text");
+		}
+	} catch (e) {
+		return e;
 	}
 });
 
