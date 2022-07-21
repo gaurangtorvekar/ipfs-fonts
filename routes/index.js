@@ -2,7 +2,6 @@ var express = require("express");
 var router = express.Router();
 const { createCSSLink, createCSS } = require("../helpers/cssTextcreator.js");
 const { addFont } = require("../helpers/addFont.js");
-const { checkPayment } = require("../helpers/checkPayment.js");
 const multer = require("multer");
 const fs = require("fs").promises;
 const lodash = require("lodash");
