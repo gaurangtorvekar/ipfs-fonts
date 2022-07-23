@@ -1,4 +1,4 @@
-# IPFS Fonts
+# web3 Fonts
 
 ### Project website - https://ipfs-fonts.herokuapp.com/
 
